@@ -1,0 +1,85 @@
+{% extends "base.htm" %}
+{% block title %}form{% endblock %}
+{% block body %}
+    <div style="width:600px; height:50px; border: 8px solid red; font-size: 30px">{{ game.board.communicate }}</div>
+
+    {{ game.players[1-game.current_player_id].nick }}'s hand
+    <table>
+    {% for card in game.players[1-game.current_player_id].hand %}
+        <td style="border:1px solid black; background-color: white; width:50px; height:80px; font-size: 40px; text-align: center">R</td>
+    {% endfor %}
+        {% if game.players[1-game.current_player_id].pulled %}
+            </table>
+            PULLED OUT CARDS<table>
+    {% for cards in game.players[1-game.current_player_id].pulled %}<tr>
+        {% for card in cards %}
+        <td style="border:1px solid black; background-color: {{ card.color }}; width:50px; height:80px; font-size: 40px; text-align: center">
+            {{ card.num }}</td>
+    {% endfor %}
+    {% endfor %}</tr>
+    {% endif %}
+    </table>
+
+    PILES
+    <table>
+         {% if game.board.discard_pile %} <tr><td style="border:1px solid black; background-color: {{ game.board.discard_pile[-1].color }}; width:50px; height:80px; font-size: 40px; text-align: center">{{ game.board.discard_pile[-1].num }}</td><td>DISCARD PILE -  CARDS ON PILE: {{ game.board.discard_pile|length }} -PULL
+    </td></tr>
+        {% else %}
+        draw pile is empty
+        {% endif %}
+        <tr><td style="border:1px solid black; background-color: white; width:50px; height:80px; font-size: 40px; text-align: center">R</td><td>DRAW PILE - CARDS ON PILE: {{ game.board.draw_pile|length }} - PULL</td></tr></table>
+PULLED OUT CARDS
+    <table>
+        {% if game.players[game.current_player_id].pulled %}
+
+        {% if game.players[game.current_player_id].pulled | length < game.phase_list[game.players[game.current_player_id].current_phase_id] | length %}
+    <a href="{{url_for("hotseat_finishing",action='cancel')}}"> Cancel pulling</a><br>
+        {% endif %}<tr>
+    {% for cards in game.players[game.current_player_id].pulled %}<tr>
+        {% for card in cards %}
+        <td style="border:1px solid black; background-color: {{ card.color }}; width:50px; height:80px; font-size: 40px; text-align: center">
+            {{ card.num }}</td>
+    {% endfor %}
+    {% endfor %}</tr>
+    {% endif %}
+    </table>
+    {% if game.players[game.current_player_id].potential_completion %}
+    <a href="{{url_for("hotseat_finishing",action='completion')}}"> PULL OUT THESE CARDS</a>
+            <table><tr>
+    {% for card in game.players[game.current_player_id].potential_completion %}
+        <td style="border:1px solid black; background-color: {{ card.color }}; width:50px; height:80px; font-size: 40px; text-align: center">
+            {{ card.num }}</td>
+    {% endfor %}</tr>
+    {% endif %}
+                        <a href="{{url_for("hotseat_finishing",action='cancel_adding')}}"> End adding</a><br>
+    </table>
+            {{ game.players[game.current_player_id].nick }}'s potential cards to add
+    <table><tr>
+    {% for card in game.players[game.current_player_id].adding %}
+            <td><a href="{{url_for("hotseat_adding",player=card[2], stage=card[0], card_id=card[1].ident)}}">Add</a>
+    {% endfor %}
+    </tr><tr>
+    {% for card in game.players[game.current_player_id].adding %}
+        <td style="border:1px solid black; background-color: {{ card[1].color }}; width:50px; height:80px; font-size: 40px; text-align: center">
+         {{ card[1].num }}</td>
+        </td>
+    {% endfor %}
+    </tr>
+    </table>
+    <table style="border:1px solid black">
+    <tr><td>Phase number</td><td>Stage 1</td><td>Stage 2</td><td>Player(s)</td></tr>
+        {% for phases in game.phase_list %}
+            <tr><td>{{ loop.index }}</td>
+            {% set outer_loop = loop.index %}
+            {% for phase in phases %}
+                <td>{{ phase[0] }} of {{ phase[1] }}</td>
+            {% endfor %}
+                <td>{% for player in game.players %}
+                    {% if outer_loop-1 == player.current_phase_id %}
+                        {{ player.nick}}
+                    {% endif %}
+                {% endfor %}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

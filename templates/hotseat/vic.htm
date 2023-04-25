@@ -1,0 +1,6 @@
+{% extends "base.htm" %}
+{% block title %}form{% endblock %}
+{% block body %}
+    <h1>hurray {{ game.players[game.current_player_id].nick }} won the game!</h1>
+    <p><a href="{{url_for("home")}}">play another one</a></p>
+{% endblock %}

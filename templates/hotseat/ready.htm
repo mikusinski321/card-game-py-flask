@@ -1,0 +1,10 @@
+{% extends "base.htm" %}
+{% block title %}form{% endblock %}
+{% block body %}
+    <h2>it's {{ game.players[game.current_player_id].nick }} turn!!</h2>
+    <p> {{ game.players[1-game.current_player_id].nick }} dont look1!</p>
+<form method="POST">
+    <input type="hidden" name="t" id="t" value="t">
+    <button type="submit">ok!</button>
+</form>
+{% endblock %}

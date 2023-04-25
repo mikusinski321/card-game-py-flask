@@ -1,0 +1,79 @@
+{% extends "base.htm" %}
+{% block title %}form{% endblock %}
+{% block body %}
+    <div id="communicate" style="width:600px; height:50px; border: 8px solid red; font-size: 30px">{{ game.board.communicate }}</div>
+
+    {{ game.players[1-game.current_player_id].nick }}'s hand
+    <table>
+    {% for card in game.players[1-game.current_player_id].hand %}
+        <td style="border:1px solid black; background-color: white; width:50px; height:80px; font-size: 40px; text-align: center">R</td>
+    {% endfor %}
+    </table>
+
+         {% if game.players[1-game.current_player_id].pulled %}
+               PULLED OUT CARDS
+    <table>
+    <tr>
+    {% for cards in game.players[1-game.current_player_id].pulled %}<tr>
+        {% for card in cards %}
+        <td style="border:1px solid black; background-color: {{ card.color }}; width:50px; height:80px; font-size: 40px; text-align: center">
+            {{ card.num }}</td>
+    {% endfor %}
+    {% endfor %}</tr>
+    {% endif %}
+    </table>
+
+    PILES
+
+    <table>
+        {% if game.board.discard_pile %} <tr><td style="border:1px solid black; background-color: {{ game.board.discard_pile[-1].color }}; width:50px; height:80px; font-size: 40px; text-align: center"><a href="{{url_for("hotseat_drawing",action='pull_discard')}}">{{ game.board.discard_pile[-1].num }}</a></td><td>DISCARD PILE -  CARDS ON PILE: {{ game.board.discard_pile|length }} -PULL
+    </td></tr>
+        {% else %}
+        discard pile is empty
+        {% endif %}
+        {% if game.board.draw_pile %} <tr><td style="border:1px solid black; background-color: white; width:50px; height:80px; font-size: 40px; text-align: center"><a href="{{url_for("hotseat_drawing",action='pull_draw')}}">R</a></td><td>DRAW PILE - CARDS ON PILE: {{ game.board.draw_pile|length }} - PULL</td></tr>
+                {% else %}
+        draw pile is empty
+        {% endif %}
+    </table>
+
+
+        {% if game.players[game.current_player_id].pulled %}
+                PULLED OUT CARDS
+    <table>
+    {% for cards in game.players[game.current_player_id].pulled %}<tr>
+        {% for card in cards %}
+        <td style="border:1px solid black; background-color: {{ card.color }}; width:50px; height:80px; font-size: 40px; text-align: center">
+            {{ card.num }}</td>
+    {% endfor %}
+    {% endfor %}</tr>
+    {% endif %}
+    </table>
+
+    {{ game.players[game.current_player_id].nick }}'s hand<table>
+        <tr>
+
+    {% for card in game.players[game.current_player_id].hand %}
+        <td style="border:1px solid black; background-color: {{ card.color }}; width:50px; height:80px; font-size: 40px; text-align: center">
+            {{ card.num }}</td>
+    {% endfor %}
+    </tr>
+    </table>
+
+        <table style="border:1px solid black">
+    <tr><td>Phase number</td><td>Stage 1</td><td>Stage 2</td><td>Player(s)</td></tr>
+        {% for phases in game.phase_list %}
+            <tr><td>{{ loop.index }}</td>
+            {% set outer_loop = loop.index %}
+            {% for phase in phases %}
+                <td>{{ phase[0] }} of {{ phase[1] }}</td>
+            {% endfor %}
+                <td>{% for player in game.players %}
+                    {% if outer_loop-1 == player.current_phase_id %}
+                        {{ player.nick}}
+                    {% endif %}
+                {% endfor %}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

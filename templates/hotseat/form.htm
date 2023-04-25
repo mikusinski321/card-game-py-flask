@@ -1,0 +1,14 @@
+{% extends "base.htm" %}
+{% block title %}form{% endblock %}
+{% block body %}
+    <h2>Phase 10: hotseat mode</h2>
+<form method="POST">
+    <label for="player1"></label>
+    player 1: <input id="id" name="player1" value="essowicz"><br>
+    <label for="player2"></label>
+    player 2: <input id="id" name="player2" value="essowicz2"><br>
+    cards in hand: <input name="card_amount" type="number" min="3" max="10" value="8"><br>
+    number of (randomly generated) phases: <input name="phase_amount" type="number" min="1" max="10" value="2"><br>
+    <input type="submit" value="start">
+</form>
+{% endblock %}
